@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Налаштування матеріалів</title>
+  <style>
+    h1 {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      text-align: left;
+      margin-bottom: 16px;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      padding: 12px;
+      background-color: #f0f0f0;
+      margin: 0;
+      font-size: 12px;
+      min-width: 250px;
+      min-height: 150px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+      background-color: white;
+      border: 1px solid #ddd;
+      table-layout: auto;
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+
+    th, td {
+      padding: 6px 8px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      background-color: #f4f4f4;
+      font-weight: bold;
+      position: relative;
+    }
+
+        th:nth-child(5), td:nth-child(5) {
+    width: 30px; /* Нова ширина для стовпця \"Матеріал основний\" */
+    }
+
+        th:nth-child(6), td:nth-child(6) {
+    width: 30px; /* Нова ширина для стовпця \"Матеріал крайки\" */
+    }
+
+    th::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 5px;
+      height: 100%;
+      cursor: col-resize;
+    }
+
+    td input {
+      width: 100%;
+      padding: 4px 6px;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      box-sizing: border-box;
+    }
+
+    td input:focus {
+      border-color: #2196F3;
+      outline: none;
+      box-shadow: 0 0 2px rgba(33, 150, 243, 0.3);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-start;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .button {
+      padding: 5px 12px;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 2px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .button:hover {
+      opacity: 0.9;
+    }
+
+    .button.delete {
+      background-color: #f44336;
+    }
+
+    .button.save {
+      background-color: #4CAF50;
+    }
+
+    .button.add {
+      background-color: #2c4ed9;
+    }
+
+    .button.cancel {
+      background-color: #888;
+    }
+
+    .gap-inputs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .gap-inputs input {
+      width: 60px !important;
+    }
+
+    .error {
+      color: #f44336;
+      margin-top: 4px;
+      font-size: 11px;
+    }
+
+    .draggable {
+      cursor: move;
+      user-select: none;
+    }
+
+    .dragging {
+      opacity: 0.5;
+      background-color: #f8f9fa;
+    }
+
+    .drop-indicator {
+      height: 2px;
+      background-color: #ff0000;
+      position: absolute;
+      left: 0;
+      right: 0;
+      pointer-events: none;
+      display: none;
+    }
+
+    tr {
+      position: relative;
+    }
+
+    tr.drag-over {
+      border-top: 2px solid #ff0000;
+    }
+
+    tr input {
+      pointer-events: auto; /* Дозволяє вводити текст без переміщення */
+    }
+
+    .drag-handle {
+      cursor: move;
+      padding: 0 5px;
+      color: #666;
+      user-select: none;
+    }
+
+    .drag-handle input {
+      pointer-events: none; /* Забороняє переміщення рядка, якщо клікнути на поле вводу */
+    }
+
+    .button-edit {
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      cursor: pointer;
+      padding: 2px 5px;
+      font-size: 12px;
+      width: auto;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .button-edit:hover {
+      background-color: #e0e0e0;
+    }
+
+    .names-dialog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+      width: 400px;
+    }
+
+    .names-list {
+      margin: 10px 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .name-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+
+    .texture-preview {
+      display: block;
+      width: 50px; /* Фіксована ширина прев'ю текстури */
+      height: 30px;
+      margin: 0 auto;
+      border: 1px solid #ccc;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .color-preview {
+      display: block;
+      width: 50px; /* Фіксована ширина прев'ю кольору */
+      height: 30px;
+      margin: 0 auto;
+      border: 1px solid #ccc;
+      background-color: white;
+      cursor: pointer;
+    }
+
+.error-tooltip {
+    position: fixed;
+    background-color: #ff4444;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 1000;
+    pointer-events: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    .sidedness-option {
+    transition: all 0.2s ease;
+    padding: 3px 6px;
+    border-radius: 3px;
+}
+
+.sidedness-option:hover {
+    background-color: #f0f0f0;
+}
+
+.sidedness-option input[type="radio"] {
+    margin-right: 5px;
+}
+
+.sidedness-option span {
+    transition: font-weight 0.2s ease;
+}
+
+.sidedness-option {
+    margin: 2px 0;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+}
+
+.sidedness-option:hover {
+    background-color: #f0f0f0;
+}
+
+.sidedness-option input[type="radio"] {
+    cursor: pointer;
+}
+
+.sidedness-option label {
+    user-select: none;
+    transition: font-weight 0.2s;
+}
+
+</style>
+</head>
+
+<body>
+    <h1>Налаштування матеріалів</h1>
+  
+    <table id="settingsTable">
+      <colgroup>
+        <col style="width: 200px;">
+        <col style="width: 100px;">
+        <col style="width: 150px;">
+        <col style="width: 120px;">
+        <col style="width: 300px;">
+        <col style="width: 100px;">
+      </colgroup>
+      <thead>
+          <tr>
+              <th>Ім'я матеріалу</th>
+              <th>Товщина (мм.)</th>
+              <th>Ім'я панелі</th>
+              <th>Шар (Tag)</th>
+              <th>Матеріал основний</th>
+              <th>Матеріал крайки</th>
+              <th>Зазори (Л, П, В, Н)</th>
+              <th>Дії</th>
+          </tr>
+      </thead>
+      
+      <tbody>
+        <!-- Рядки будуть додаватися динамічно -->
+      </tbody>
+    </table>
+
+    <div style="color: #666666; margin-top: 10px; margin-bottom: 10px; font-style: italic;">
+        * Для редагування текстури або кольору матеріалу натисніть на піктограму у стовпці "Матеріал основний" або "Матеріал крайки" у відповідному рядку
+      </div>
+    
+      <div class="actions">
+        <button class="button add" onclick="addNewMaterial()">Додати новий матеріал</button>
+        <button class="button save" onclick="saveSettings()">Зберегти налаштування</button>
+        <button class="button cancel" onclick="cancelDialog()">Скасувати</button>
+      </div>   
+
+  <div id="dropIndicator" class="drop-indicator"></div>
+
+  <script>
+
+let materials = {};
+let materialGroups = {};
+let dragSrcElement = null;
+let dropIndicator = null;
+
+// Додайте тут код для стилів
+const style = document.createElement('style');
+style.textContent = `
+    .draggable { cursor: move; }
+    .drop-indicator { 
+        height: 2px;
+        background-color: #ff0000;
+        position: absolute;
+        pointer-events: none;
+        z-index: 1000;
+    }
+    tr.dragging { opacity: 0.4; }
+`;
+document.head.appendChild(style);
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (window.sketchup && typeof window.sketchup.load_materials === "function") {
+        window.sketchup.load_materials();
+    } else {
+        console.warn("SketchUp API is unavailable. Attempting to fetch JSON.");
+
+        fetch("path_to_your_json_file.json") // Replace with actual path
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                initializeDialog(data);
+            })
+            .catch(error => {
+                console.error("Error fetching JSON data:", error);
+                initializeDialog({
+                    schema_version: "1.0",
+                    current_material: "2",
+                    last_used_settings: {
+                        panel_material_type: "2",
+                        object_z: 3,
+                        object_name: "Задня стінка ДВП",
+                        layer_name: "| HDF",
+                        state_object: 0,
+                        left_gap: 0,
+                        right_gap: 0,
+                        top_gap: 0,
+                        bottom_gap: 0
+                    },
+                    materials: {},
+                    material_groups: {}
+                });
+            });
+    }
+
+    const table = document.querySelector("table");
+    let isResizing = false;
+    let startX;
+    let startWidth;
+    let resizingTh;
+
+    table.addEventListener("mousedown", (e) => {
+        if (e.target.tagName === "TH" && e.offsetX > e.target.offsetWidth - 10) {
+            isResizing = true;
+            resizingTh = e.target;
+            startX = e.pageX;
+            startWidth = resizingTh.offsetWidth;
+            document.body.style.cursor = "col-resize";
+            e.preventDefault();
+        }
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (isResizing) {
+            const diff = e.pageX - startX;
+            const newWidth = startWidth + diff;
+            if (newWidth > 30) {
+                resizingTh.style.width = `${newWidth}px`;
+            }
+        }
+    });
+
+    document.addEventListener("mouseup", () => {
+        if (isResizing) {
+            isResizing = false;
+            resizingTh = null;
+            document.body.style.cursor = "";
+        }
+    });
+
+    const dropIndicator = document.createElement("div");
+    dropIndicator.id = "dropIndicator";
+    dropIndicator.style.position = "absolute";
+    dropIndicator.style.height = "2px";
+    dropIndicator.style.backgroundColor = "red";
+    dropIndicator.style.zIndex = "1000";
+    dropIndicator.style.pointerEvents = "none";
+    dropIndicator.style.display = "none";
+    document.body.appendChild(dropIndicator);
+});
+
+function renderTable() {
+    const tbody = document.querySelector("#settingsTable tbody");
+    tbody.innerHTML = "";
+
+    Object.entries(materials).forEach(([key, material]) => {
+        if (key === '9') return;
+
+        const row = document.createElement("tr");
+        row.dataset.key = key;
+        row.draggable = true;
+        row.classList.add('draggable');
+        row.style.height = '40px';
+
+        row.innerHTML = `
+            <td>
+                <input type="text" value="${material.name || ''}"
+                       onchange="updateMaterial('${key}', 'name', this.value)"
+                       style="background-color: #ffffff; width: 100%;"
+                       title="${material.display_name || ''}">
+            </td>
+            <td>
+                <input type="number" value="${material.object_z || 0}"
+                       onchange="updateMaterial('${key}', 'object_z', this.value)"
+                       min="0" step="0.1">
+            </td>
+            <td style="text-align: center;">
+                <button class="button-edit" onclick="editNames('${key}')"
+                        style="padding: 2px; font-size: 12px; width: auto;" 
+                        title="Редагувати список імен панелі (${(material.object_names || []).length} імен)">
+                    Список імен
+                </button>
+            </td>
+            <td>
+                <input type="text" value="${material.layer_name || ''}"
+                       onchange="updateMaterial('${key}', 'layer_name', this.value)"
+                       style="background-color: #ffffff;">
+            </td>
+            <td>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div class="texture-preview"
+                         style="background: ${material.texture_paths?.main ? `url('${material.texture_paths.main}') center/cover, white` : `rgba(${material.color_properties?.main?.color?.join(',') || '255,255,255'}, ${material.color_properties?.main?.alpha || 1})`};
+                                height: 30px; width: 50px; border: 1px solid #ccc; cursor: pointer;"
+                         title="${material.texture_paths?.main ? 'Редагувати текстуру (основну)' : 'Редагувати колір (основний)'}"
+                         onclick="editMainMaterial('${key}')">
+                    </div>
+                    <div class="sidedness-toggle" style="display: flex; flex-direction: column; gap: 5px; align-items: flex-start;">
+                        <div class="sidedness-option" style="display: flex; align-items: center;">
+                            <input type="radio" 
+                                id="single-sided-${key}" 
+                                name="sidedness-${key}" 
+                                value="Single_sided"
+                                ${material.sidedness?.type === 'Single_sided' ? 'checked' : ''}
+                                onchange="updateSidedness('${key}', 'Single_sided')"
+                                style="margin-right: 5px;">
+                            <label for="single-sided-${key}" 
+                                style="cursor: pointer; font-weight: ${material.sidedness?.type === 'Single_sided' ? 'bold' : 'normal'}">
+                                Однобічний
+                            </label>
+                        </div>
+                        <div class="sidedness-option" style="display: flex; align-items: center;">
+                            <input type="radio" 
+                                id="double-sided-${key}" 
+                                name="sidedness-${key}" 
+                                value="Double_sided"
+                                ${material.sidedness?.type === 'Double_sided' ? 'checked' : ''}
+                                onchange="updateSidedness('${key}', 'Double_sided')"
+                                style="margin-right: 5px;">
+                            <label for="double-sided-${key}" 
+                                style="cursor: pointer; font-weight: ${material.sidedness?.type === 'Double_sided' ? 'bold' : 'normal'}">
+                                Двобічний
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="texture-preview"
+                     style="background: ${material.texture_paths?.edge ? `url('${material.texture_paths.edge}') center/cover, white` : `rgba(${material.color_properties?.edge?.color?.join(',') || '255,255,255'}, ${material.color_properties?.edge?.alpha || 1})`};
+                            height: 30px; width: 50px; border: 1px solid #ccc; cursor: pointer;"
+                     title="${material.texture_paths?.edge ? 'Редагувати текстуру (ребер)' : 'Редагувати колір (ребер)'}"
+                     onclick="editEdgeMaterial('${key}')">
+                </div>
+            </td>
+            <td class="gap-inputs">
+                <input type="number" value="${material.gaps ? material.gaps[0] : 0}"
+                       onchange="updateGap('${key}', 0, this.value)" title="Лівий">
+                <input type="number" value="${material.gaps ? material.gaps[1] : 0}"
+                       onchange="updateGap('${key}', 1, this.value)" title="Правий">
+                <input type="number" value="${material.gaps ? material.gaps[2] : 0}"
+                       onchange="updateGap('${key}', 2, this.value)" title="Верхній">
+                <input type="number" value="${material.gaps ? material.gaps[3] : 0}"
+                       onchange="updateGap('${key}', 3, this.value)" title="Нижній">
+            </td>
+            <td>
+                <button class="button delete" onclick="deleteMaterial('${key}')">
+                    Видалити
+                </button>
+            </td>
+        `;
+
+        row.addEventListener('dragstart', handleDragStart, false);
+        row.addEventListener('dragend', handleDragEnd, false);
+        row.addEventListener('dragover', handleDragOver, false);
+        row.addEventListener('drop', handleDrop, false);
+
+        tbody.appendChild(row);
+    });
+}
+
+function updateSidedness(key, type) {
+    if (materials[key]) {
+        // Оновлюємо стан у локальних даних
+        materials[key].sidedness = { type };
+        
+        // Оновлюємо стилі для радіо-кнопок
+        const singleSidedLabel = document.querySelector(`label[for="single-sided-${key}"]`);
+        const doubleSidedLabel = document.querySelector(`label[for="double-sided-${key}"]`);
+        
+        if (singleSidedLabel && doubleSidedLabel) {
+            singleSidedLabel.style.fontWeight = type === 'Single_sided' ? 'bold' : 'normal';
+            doubleSidedLabel.style.fontWeight = type === 'Double_sided' ? 'bold' : 'normal';
+        }
+        
+        // Відправляємо оновлення в Ruby
+        if (window.sketchup) {
+            const data = {
+                material_key: key,
+                sidedness_type: type,
+                materials: materials
+            };
+            sketchup.update_sidedness(JSON.stringify(data));
+        }
+        
+        console.log(`Оновлено sidedness для матеріалу ${key} на ${type}`);
+    }
+}
+
+function editMainMaterial(key) {
+    const material = materials[key];
+    const overlay = createOverlay();
+    const dialog = document.createElement('div');
+    dialog.className = 'names-dialog';
+
+    dialog.innerHTML = `
+        <h2 style="margin-top: 0; margin-bottom: 16px;">Редагування основного матеріалу "${material.name}"</h2>
+        
+        <div style="margin-bottom: 10px;">
+            <label style="font-weight: bold;">Текстура (основна):</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="text" value="${material.texture_paths?.main || ''}" 
+                       onchange="updateMaterial('${key}', 'texture_paths.main', this.value)" 
+                       style="flex-grow: 1;">
+                <button onclick="selectTexture('${key}', 'main')" style="padding: 4px 8px;">...</button>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 10px;">
+            <label style="font-weight: bold;">Колір (основний):</label>
+            <input type="color" value="${rgbToHex(material.color_properties?.main?.color || [255, 255, 255])}" 
+                   onchange="updateColor('${key}', 'main', this.value)">
+        </div>
+        
+        <div style="margin-bottom: 10px;">
+            <label style="font-weight: bold;">Прозорість (основний):</label>
+            <input type="number" min="0" max="1" step="0.1" 
+                   value="${material.color_properties?.main?.alpha || 1}" 
+                   onchange="updateAlpha('${key}', 'main', this.value)">
+        </div>
+        
+        <div class="actions" style="margin-top: 16px;">
+            <button class="button save" onclick="closeDialog()">Зберегти</button>
+            <button class="button cancel" onclick="closeDialog()">Скасувати</button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+    document.body.appendChild(dialog);
+}
+
+function editEdgeMaterial(key) {
+    const material = materials[key];
+    const overlay = createOverlay();
+    const dialog = document.createElement('div');
+    dialog.className = 'names-dialog';
+
+    dialog.innerHTML = `
+        <h2 style="margin-top: 0; margin-bottom: 16px;">Редагування матеріалу крайки "${material.name}"</h2>
+        
+        <div style="margin-bottom: 10px;">
+            <label style="font-weight: bold;">Текстура (ребер):</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="text" value="${material.texture_paths?.edge || ''}" 
+                       onchange="updateMaterial('${key}', 'texture_paths.edge', this.value)" 
+                       style="flex-grow: 1;">
+                <button onclick="selectTexture('${key}', 'edge')" style="padding: 4px 8px;">...</button>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 10px;">
+            <label style="font-weight: bold;">Колір (ребер):</label>
+            <input type="color" value="${rgbToHex(material.color_properties?.edge?.color || [255, 255, 255])}" 
+                   onchange="updateColor('${key}', 'edge', this.value)">
+        </div>
+        
+        <div style="margin-bottom: 10px;">
+            <label style="font-weight: bold;">Прозорість (ребер):</label>
+            <input type="number" min="0" max="1" step="0.1" 
+                   value="${material.color_properties?.edge?.alpha || 1}" 
+                   onchange="updateAlpha('${key}', 'edge', this.value)">
+        </div>
+        
+        <div class="actions" style="margin-top: 16px;">
+            <button class="button save" onclick="closeDialog()">Зберегти</button>
+            <button class="button cancel" onclick="closeDialog()">Скасувати</button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+    document.body.appendChild(dialog);
+}
+
+function createOverlay() {
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    overlay.onclick = closeDialog;
+    return overlay;
+}
+
+// Allow manual column width adjustment
+const table = document.querySelector("#settingsTable");
+let isResizing = false;
+let startWidth = 0;
+let startX = 0;
+let resizingColumn = null;
+
+table.addEventListener("mousedown", (e) => {
+    if (e.target.tagName === "TH" && e.offsetX > e.target.offsetWidth - 10) {
+        isResizing = true;
+        startWidth = e.target.offsetWidth;
+        startX = e.pageX;
+        resizingColumn = e.target;
+        document.body.style.cursor = "col-resize";
+        e.preventDefault();
+    }
+});
+
+document.addEventListener("mousemove", (e) => {
+    if (isResizing && resizingColumn) {
+        const diffX = e.pageX - startX;
+        const newWidth = Math.max(30, startWidth + diffX); // Minimum width 30px
+        resizingColumn.style.width = `${newWidth}px`;
+    }
+});
+
+document.addEventListener("mouseup", () => {
+    if (isResizing) {
+        isResizing = false;
+        resizingColumn = null;
+        document.body.style.cursor = "";
+    }
+});
+
+function handleDragOver(e) {
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+    
+    const dropIndicator = document.getElementById("dropIndicator");
+    const rect = this.getBoundingClientRect();
+    
+    if (e.clientY < rect.top + (rect.height / 2)) {
+        dropIndicator.style.top = `${rect.top}px`;
+    } else {
+        dropIndicator.style.top = `${rect.bottom}px`;
+    }
+    
+    dropIndicator.style.left = `${rect.left}px`;
+    dropIndicator.style.width = `${rect.width}px`;
+    dropIndicator.style.display = "block";
+    
+    return false;
+}
+
+function selectTexture(key, textureType) {
+    if (window.sketchup && typeof window.sketchup.select_texture === 'function') {
+        window.sketchup.select_texture(key, textureType, (selectedPath) => {
+            if (selectedPath) {
+                updateMaterial(key, `texture_paths.${textureType}`, selectedPath);
+            }
+        });
+    } else {
+        const selectedPath = prompt(`Введіть шлях до текстури (${textureType === 'main' ? 'основної' : 'ребер'}):`);
+        if (selectedPath) {
+            updateMaterial(key, `texture_paths.${textureType}`, selectedPath);
+        }
+    }
+}
+
+function editMaterial(materialKey) {
+    const material = materials[materialKey];
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+
+    const dialog = document.createElement('div');
+    dialog.className = 'names-dialog';
+    dialog.innerHTML = `
+        <h2 style="margin-top: 0; margin-bottom: 16px;">Редагування властивостей "${material.name}"</h2>
+        
+        <div style="margin-bottom: 10px; display: flex; align-items: center;">
+            <label style="display: block; font-weight: bold; flex-grow: 1;">Текстура (основна):</label>
+            <input type="text" value="${material.texture_paths?.main || ''}" 
+                   onchange="updateMaterial('${materialKey}', 'texture_paths.main', this.value)" 
+                   placeholder="Шлях до текстури" style="width: 70%; margin-right: 10px;">
+            <button onclick="selectTexture('${materialKey}', 'main')" 
+                    style="padding: 4px 8px;">...</button>
+        </div>
+        
+        <div style="margin-bottom: 10px; display: flex; align-items: center;">
+            <label style="display: block; font-weight: bold; flex-grow: 1;">Текстура (ребер):</label>
+            <input type="text" value="${material.texture_paths?.edge || ''}" 
+                   onchange="updateMaterial('${materialKey}', 'texture_paths.edge', this.value)" 
+                   placeholder="Шлях до текстури ребер" style="width: 70%; margin-right: 10px;">
+            <button onclick="selectTexture('${materialKey}', 'edge')" 
+                    style="padding: 4px 8px;">...</button>
+        </div>
+        
+        <div style="margin-bottom: 10px;">
+            <label style="display: block; font-weight: bold;">Колір (основний):</label>
+            <input type="color" value="${rgbToHex(material.color_properties?.main?.color || [255,255,255])}"
+                   onchange="updateColor('${materialKey}', 'main', this.value)">
+        </div>
+        
+        <div style="margin-bottom: 10px;">
+            <label style="display: block; font-weight: bold;">Прозорість (основний):</label>
+            <input type="number" min="0" max="1" step="0.1" 
+                   value="${material.color_properties?.main?.alpha || 1}" 
+                   onchange="updateAlpha('${materialKey}', 'main', this.value)">
+        </div>
+        
+        <div style="margin-bottom: 10px;">
+            <label style="display: block; font-weight: bold;">Колір (ребер):</label>
+            <input type="color" value="${rgbToHex(material.color_properties?.edge?.color || [255,255,255])}"
+                   onchange="updateColor('${materialKey}', 'edge', this.value)">
+        </div>
+        
+        <div style="margin-bottom: 10px;">
+            <label style="display: block; font-weight: bold;">Прозорість (ребер):</label>
+            <input type="number" min="0" max="1" step="0.1" 
+                   value="${material.color_properties?.edge?.alpha || 1}" 
+                   onchange="updateAlpha('${materialKey}', 'edge', this.value)">
+        </div>
+        
+        <div class="actions" style="margin-top: 16px;">
+            <button class="button save" onclick="closeDialog()">
+                Зберегти
+            </button>
+            <button class="button cancel" onclick="closeDialog()">
+                Скасувати
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+    document.body.appendChild(dialog);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const table = document.querySelector("table");
+    let isResizing = false;
+    let startX;
+    let startWidth;
+    let resizingTh;
+
+    table.addEventListener("mousedown", (e) => {
+        if (e.target.tagName === "TH" && e.offsetX > e.target.offsetWidth - 10) {
+            isResizing = true;
+            resizingTh = e.target;
+            startX = e.pageX;
+            startWidth = resizingTh.offsetWidth;
+            document.body.style.cursor = "col-resize";
+            e.preventDefault(); // Запобігає небажаним побічним ефектам
+        }
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (isResizing) {
+            const diff = e.pageX - startX;
+            const newWidth = startWidth + diff;
+            if (newWidth > 30) { // Мінімальна ширина стовпця
+                resizingTh.style.width = `${newWidth}px`;
+            }
+        }
+    });
+
+    document.addEventListener("mouseup", () => {
+        if (isResizing) {
+            isResizing = false;
+            resizingTh = null;
+            document.body.style.cursor = "";
+        }
+    });
+});
+
+function closeDialog() {
+    document.querySelector('.overlay')?.remove();
+    document.querySelector('.names-dialog')?.remove();
+}
+
+function updateColor(key, type, value) {
+    const rgb = hexToRgb(value);
+    materials[key].color_properties = materials[key].color_properties || {};
+    materials[key].color_properties[type] = materials[key].color_properties[type] || {};
+    materials[key].color_properties[type].color = rgb;
+    renderTable();
+}
+
+function updateAlpha(key, type, value) {
+    materials[key].color_properties = materials[key].color_properties || {};
+    materials[key].color_properties[type] = materials[key].color_properties[type] || {};
+    materials[key].color_properties[type].alpha = parseFloat(value);
+    renderTable();
+}
+
+function rgbToHex(rgb) {
+    return `#${rgb.map(x => x.toString(16).padStart(2, '0')).join('')}`;
+}
+
+function hexToRgb(hex) {
+    const bigint = parseInt(hex.slice(1), 16);
+    return [bigint >> 16 & 255, bigint >> 8 & 255, bigint & 255];
+}
+
+function editNames(materialKey) {
+    const material = materials[materialKey];
+    if (!material.object_names) {
+        material.object_names = [];
+    }
+
+    // Перевірка, чи вже існує overlay
+    let overlay = document.querySelector('.overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'overlay';
+        overlay.onclick = closeNamesDialog; // Закриття діалогу при кліку на фон
+        document.body.appendChild(overlay);
+    }
+
+    // Перевірка, чи вже існує діалог
+    let existingDialog = document.querySelector('.names-dialog');
+    if (existingDialog) {
+        existingDialog.remove();
+    }
+
+    const dialog = document.createElement('div');
+    dialog.className = 'names-dialog';
+    dialog.innerHTML = `
+        <h2 style="margin-top: 0;">Редагування імен для "${material.display_name || material.name}"</h2>
+        <div class="names-list">
+            ${material.object_names.map((name, index) => `
+                <div class="name-item">
+                    <input type="text" value="${name}" 
+                           onchange="updateName('${materialKey}', ${index}, this.value)">
+                    <button class="button delete" 
+                            onclick="deleteName('${materialKey}', ${index})">×</button>
+                </div>
+            `).join('')}
+        </div>
+        <button class="button add" onclick="addName('${materialKey}')"
+                style="margin-top: 8px;">
+            + Додати ім'я
+        </button>
+        <div class="actions" style="margin-top: 16px;">
+            <button class="button save" onclick="saveNames('${materialKey}')">
+                Зберегти
+            </button>
+            <button class="button cancel" onclick="closeNamesDialog()">
+                Скасувати
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(dialog);
+}
+
+function updateName(materialKey, index, value) {
+    if (!materials[materialKey].object_names) {
+        materials[materialKey].object_names = [];
+    }
+    materials[materialKey].object_names[index] = value;
+}
+
+function deleteName(materialKey, index) {
+    materials[materialKey].object_names.splice(index, 1);
+    editNames(materialKey);
+}
+
+function addName(materialKey) {
+    if (!materials[materialKey].object_names) {
+        materials[materialKey].object_names = [];
+    }
+    materials[materialKey].object_names.push('Нове ім\'я');
+    editNames(materialKey);
+}
+
+function saveNames(materialKey) {
+    closeNamesDialog();
+    renderTable();
+}
+
+function closeNamesDialog() {
+    const overlay = document.querySelector('.overlay');
+    const dialog = document.querySelector('.names-dialog');
+    if (overlay) overlay.remove();
+    if (dialog) dialog.remove();
+}
+
+// Змінюємо функцію handleDragStart
+function handleDragStart(e) {
+    dragSrcElement = this;
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text", this.dataset.key);
+    this.style.opacity = '0.4';
+}
+
+// Змінюємо функцію handleDragOver
+function handleDragOver(e) {
+    e.preventDefault();
+    const tr = e.target.closest('tr');
+    if (tr && dragSrcElement !== tr) {
+        const rect = tr.getBoundingClientRect();
+        const dropIndicator = document.getElementById("dropIndicator");
+        const threshold = rect.top + rect.height / 2;
+        
+        dropIndicator.style.display = "block";
+        dropIndicator.style.position = "absolute";
+        dropIndicator.style.width = `${rect.width}px`;
+        dropIndicator.style.left = `${rect.left}px`;
+        dropIndicator.style.top = e.clientY < threshold ? 
+            `${rect.top}px` : `${rect.bottom}px`;
+    }
+}
+
+function handleDragLeave(e) {
+    const dropIndicator = document.getElementById("dropIndicator");
+    if (dropIndicator) {
+        dropIndicator.style.display = "none";
+    }
+}
+
+// Додайте функцію для показу помилки
+function showError(message, x, y) {
+    const tooltip = document.createElement('div');
+    tooltip.className = 'error-tooltip';
+    tooltip.textContent = message;
+    tooltip.style.left = `${x}px`;
+    tooltip.style.top = `${y}px`;
+    document.body.appendChild(tooltip);
+    
+    setTimeout(() => tooltip.remove(), 2000);
+}
+
+// Модифікована функція handleDrop
+function handleDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const targetRow = e.target.closest('tr');
+    if (!targetRow || !dragSrcElement) return;
+
+    const sourceKey = dragSrcElement.dataset.key;
+    const targetKey = targetRow.dataset.key;
+    
+    if (sourceKey === targetKey) return;
+
+    // Отримуємо всі ключі в поточному порядку
+    const tbody = document.querySelector("#settingsTable tbody");
+    const currentRows = Array.from(tbody.querySelectorAll('tr'));
+    let orderedKeys = currentRows.map(row => row.dataset.key);
+    
+    // Видаляємо source key з масиву
+    orderedKeys = orderedKeys.filter(key => key !== sourceKey);
+    
+    // Визначаємо нову позицію для вставки
+    const insertBefore = e.clientY < targetRow.getBoundingClientRect().top + targetRow.getBoundingClientRect().height / 2;
+    const targetIndex = orderedKeys.indexOf(targetKey);
+    const insertIndex = insertBefore ? targetIndex : targetIndex + 1;
+    
+    // Вставляємо ключ в нову позицію
+    orderedKeys.splice(insertIndex, 0, sourceKey);
+    
+    // Створюємо новий об'єкт з оновленим порядком
+    const newMaterials = {};
+    orderedKeys.forEach(key => {
+        if (materials[key]) {
+            newMaterials[key] = JSON.parse(JSON.stringify(materials[key]));
+        }
+    });
+    
+    // Оновлюємо дані та інтерфейс
+    materials = newMaterials;
+    renderTable();
+    
+    if (window.sketchup) {
+        updateJsonFile();
+    }
+}
+
+// Змінюємо функцію handleDragEnd
+function handleDragEnd(e) {
+    this.style.opacity = '1';
+    const dropIndicator = document.getElementById("dropIndicator");
+    if (dropIndicator) {
+        dropIndicator.style.display = "none";
+    }
+}
+
+function addNewMaterial() {
+  const tbody = document.querySelector("#settingsTable tbody");
+  const existingIds = Array.from(tbody.querySelectorAll("tr")).map(row => row.dataset.key);
+  
+  // Знаходимо максимальний існуючий ID
+  const maxId = Math.max(...existingIds.map(id => parseInt(id))) || 0;
+  const newId = (maxId + 1).toString();
+
+  // Створюємо новий матеріал з усіма необхідними полями
+  const newMaterial = {
+    id: newId,
+    name: `Матеріал ${newId}`,
+    display_name: `Матеріал ${newId}`,
+    object_names: ["Нове ім'я"],
+    object_z: 18,
+    layer_name: "| DefaultLayer",
+    gaps: [0, 0, 0, 0],
+    material_type: "texture",
+    texture_paths: {
+      main: "",
+      edge: "" 
+    },
+    color_properties: {
+      main: {
+        color: [255, 255, 255],
+        alpha: 1
+      },
+      edge: {
+        color: [255, 255, 255],
+        alpha: 1
+      }
+    },
+    sidedness: {
+      type: "Double_sided"
+    },
+    has_edge: false
+  };
+
+  // Додаємо матеріал до materials
+  materials[newId] = newMaterial;
+
+  // Оновлюємо таблицю
+  renderTable();
+
+  // Зберігаємо зміни в JSON
+  if (window.sketchup) {
+    window.sketchup.save_materials(JSON.stringify({
+      schema_version: "1.0",
+      current_material: newId,
+      materials: materials,
+      material_groups: materialGroups
+    }));
+  }
+}
+
+function updateJsonFile() {
+    const updatedJson = {
+        schema_version: "1.0",
+        current_material: Object.keys(materials)[0],
+        last_used_settings: currentSettings,
+        materials: materials,
+        material_groups: materialGroups
+    };
+
+    if (window.sketchup) {
+        window.sketchup.save_materials(JSON.stringify(updatedJson));
+    } else {
+        console.log("Updated JSON:", JSON.stringify(updatedJson, null, 2));
+    }
+}
+
+function loadMaterials() {
+    console.log("Запит на завантаження матеріалів...");
+    if (window.sketchup) {
+        window.sketchup.load_materials();
+    } else {
+        console.error("Об'єкт SketchUp недоступний. Використовується тестовий режим.");
+        // Ви можете викликати `receiveMaterials` з тестовими даними тут.
+    }
+}
+
+function receiveMaterials(data) {
+    console.log("Отримані дані в receiveMaterials:", data);
+    try {
+        const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+        console.log("Розпарсені дані:", parsedData);
+        
+        if (!parsedData || !parsedData.materials) {
+            console.error("Неправильна структура даних:", parsedData);
+            alert("Помилка: неправильна структура даних матеріалів.");
+            return;
+        }
+        
+        materials = parsedData.materials;
+
+        // Ініціалізація currentSettings
+        currentSettings = parsedData.last_used_settings || {
+            panel_material_type: Object.keys(materials)[0], // Встановити перший матеріал за замовчуванням
+            object_z: 18,
+            object_name: "Новий об'єкт",
+            layer_name: "| DefaultLayer",
+            state_object: 0,
+            left_gap: 0,
+            right_gap: 0,
+            top_gap: 0,
+            bottom_gap: 0
+        };
+
+        console.log("Збережені матеріали:", materials);
+        
+        if (materials['9']) { // Видаляємо default матеріал, якщо є
+            delete materials['9'];
+        }
+        
+        renderTable();
+    } catch (error) {
+        console.error("Помилка обробки даних:", error);
+        alert("Помилка при обробці даних матеріалів: " + error.message);
+    }
+}
+
+
+function updateMaterial(key, field, value) {
+    const [section, subfield] = field.split('.');
+    if (section === 'texture_paths') {
+        materials[key].texture_paths = materials[key].texture_paths || {};
+        materials[key].texture_paths[subfield] = value;
+    } else {
+        materials[key][field] = value;
+    }
+    renderTable();
+}
+
+function updateGap(key, index, value) {
+    const numValue = parseInt(value);
+    materials[key].gaps[index] = isNaN(numValue) ? 0 : numValue;
+}
+
+function deleteMaterial(key) {
+    if (confirm(`Ви дійсно хочете видалити матеріал "${materials[key].display_name}"?`)) {
+        delete materials[key];
+        renderTable();
+    }
+}
+
+function saveSettings() {
+    try {
+        if (!currentSettings || typeof currentSettings !== "object") {
+            throw new Error("currentSettings не ініціалізовано або має некоректний формат.");
+        }
+
+        if (!materials || typeof materials !== "object" || Object.keys(materials).length === 0) {
+            throw new Error("Матеріали не завантажені або порожні.");
+        }
+
+        // Перевірка і виправлення даних для кожного матеріалу
+        for (const [key, material] of Object.entries(materials)) {
+            if (!material || typeof material !== "object") {
+                throw new Error(`Матеріал з ключем ${key} має некоректну структуру.`);
+            }
+
+            if (!material.object_name || material.object_name.trim() === "") {
+                console.warn(`Матеріал з ключем ${key} не має імені. Призначено значення за замовчуванням.`);
+                material.object_name = `Матеріал ${key}`;
+            }
+
+            const objectZ = parseFloat(material.object_z);
+            if (isNaN(objectZ) || objectZ <= 0) {
+                throw new Error(`Матеріал "${material.object_name}" має некоректну товщину: ${material.object_z}.`);
+            }
+            material.object_z = objectZ;
+
+            if (!Array.isArray(material.gaps) || material.gaps.length !== 4) {
+                console.warn(`Матеріал "${material.object_name}" має некоректні зазори. Призначено значення за замовчуванням.`);
+                material.gaps = [0, 0, 0, 0];
+            }
+
+            if (!material.layer_name || material.layer_name.trim() === "") {
+                console.warn(`Матеріал "${material.object_name}" не має шару. Призначено значення за замовчуванням.`);
+                material.layer_name = "| DefaultLayer";
+            }
+
+            // Перевірка наявності sidedness
+            if (!material.sidedness) {
+                material.sidedness = { type: "Double_sided" };
+            }
+
+            // Перевірка наявності текстур або кольорів
+            if (material.material_type === "texture" && !material.texture_paths) {
+                material.texture_paths = { main: "", edge: "" };
+            }
+            if (material.material_type === "color" && !material.color_properties) {
+                material.color_properties = {
+                    main: { color: [255, 255, 255], alpha: 1 },
+                    edge: { color: [255, 255, 255], alpha: 1 }
+                };
+            }
+        }
+
+        const dataToSave = {
+            schema_version: "1.0",
+            current_material: currentSettings.panel_material_type || "1",
+            last_used_settings: { ...currentSettings },
+            materials: { ...materials },
+            material_groups: { ...materialGroups }
+        };
+
+        if (window.sketchup && typeof window.sketchup.save_materials === "function") {
+            // Зберігаємо налаштування
+            window.sketchup.save_materials(JSON.stringify(dataToSave));
+            
+            // Показуємо повідомлення про успіх
+            showSuccess("Налаштування успішно збережені!");
+            
+            // Перезапускаємо інструмент
+            if (window.sketchup.restart_tool) {
+                window.sketchup.restart_tool();
+            }
+            
+            // Закриваємо діалог налаштувань
+            if (window.sketchup.close_settings_dialog) {
+                window.sketchup.close_settings_dialog();
+            }
+        } else {
+            console.warn("SketchUp API недоступний. Симуляція збереження:");
+            console.log(JSON.stringify(dataToSave, null, 2));
+        }
+    } catch (error) {
+        console.error("Помилка збереження налаштувань:", error);
+        alert(`Помилка при збереженні налаштувань: ${error.message}`);
+    }
+}
+
+function showSuccess(message) {
+    const successDiv = document.createElement('div');
+    successDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+        animation: fadeOut 3s forwards;
+    `;
+    successDiv.textContent = message;
+    document.body.appendChild(successDiv);
+    
+    // Додаємо CSS анімацію для плавного зникнення
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Видаляємо елемент після завершення анімації
+    setTimeout(() => {
+        successDiv.remove();
+        style.remove();
+    }, 3000);
+}
+
+function showSuccess(message) {
+    const successDiv = document.createElement('div');
+    successDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+        animation: fadeOut 3s forwards;
+    `;
+    successDiv.textContent = message;
+    document.body.appendChild(successDiv);
+    setTimeout(() => successDiv.remove(), 3000);
+}
+
+function cancelDialog() {
+    if (window.sketchup) {
+        window.sketchup.cancel_dialog();
+    }
+}
+
+</script>
+</body>
+</html>

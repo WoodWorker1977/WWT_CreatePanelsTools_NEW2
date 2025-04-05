@@ -1,0 +1,430 @@
+{
+  "schema_version": "1.0",
+  "current_material": "8",
+  "last_used_settings": {
+    "panel_material_type": "8",
+    "object_z": 18,
+    "object_name": "Фарбований фасад",
+    "layer_name": "No material",
+    "affiliation": "Фасади",
+    "state_object": 0,
+    "left_gap": 2,
+    "right_gap": 2,
+    "top_gap": 2,
+    "bottom_gap": 2,
+    "has_edge": false
+  },
+  "materials": {
+    "1": {
+      "id": "1",
+      "name": "ДСП Egger H 3303 ST10 Дуб Гамільтон (Арлінгтон) натуральний 2800х2070х18 $95745",
+      "display_name": "LDSP",
+      "object_names": [
+        "Низ",
+        "Верх",
+        "Ліва",
+        "Права",
+        "Полиця",
+        "Задня стінка",
+        "Фасад"
+      ],
+      "object_z": 18,
+      "layer_name": "| LDSP",
+      "gaps": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "material_type": "texture",
+      "texture_paths": {
+        "main": "ДСП Egger H 3303 ST10 Дуб Гамільтон (Арлінгтон) натуральний 2800х2070х18 $95745.png",
+        "edge": "DSP.jpg"
+      },
+      "color_properties": {
+        "main": {
+          "color": [
+            255,
+            255,
+            255
+          ],
+          "alpha": 1
+        },
+        "edge": {
+          "color": [
+            255,
+            255,
+            255
+          ],
+          "alpha": 1
+        }
+      },
+      "sidedness": {
+        "type": "Double_sided"
+      },
+      "has_edge": false,
+      "affiliation_options": [
+        "Корпуса",
+        "Закладні",
+        "Фальші"
+      ],
+      "object_name": "Матеріал 1"
+    },
+    "2": {
+      "id": "2",
+      "name": "ДВП Білий 101 Уніплит 2745х1700х3,2мм $142985",
+      "display_name": "Панель HDF",
+      "object_names": [
+        "Задня стінка ДВП",
+        "Дно ДВП"
+      ],
+      "object_z": 3,
+      "layer_name": "| HDF",
+      "gaps": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "material_type": "texture",
+      "texture_paths": {
+        "main": "_HDF.jpg",
+        "edge": "hdf.jpg"
+      },
+      "color_properties": {
+        "main": {
+          "color": [
+            255,
+            255,
+            255
+          ],
+          "alpha": 1
+        },
+        "edge": {
+          "color": [
+            255,
+            255,
+            255
+          ],
+          "alpha": 1
+        }
+      },
+      "sidedness": {
+        "type": "Single_sided"
+      },
+      "has_edge": false,
+      "affiliation_options": [
+        "Корпуса",
+        "Закладні"
+      ],
+      "object_name": "Матеріал 2"
+    },
+    "3": {
+      "id": "3",
+      "name": "ЛМДФ двостороння 16мм EGGER W980 $162432",
+      "display_name": "MDF вологостійкий",
+      "object_names": [
+        "Фасад вологостійкий"
+      ],
+      "object_z": 16,
+      "layer_name": "| MDF-MR",
+      "gaps": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "material_type": "texture",
+      "texture_paths": {
+        "main": "_MDF-MR.jpg",
+        "edge": "MDF-MR.jpg"
+      },
+      "color_properties": {
+        "main": {
+          "color": [
+            255,
+            255,
+            255
+          ],
+          "alpha": 1
+        },
+        "edge": {
+          "color": [
+            255,
+            255,
+            255
+          ],
+          "alpha": 1
+        }
+      },
+      "sidedness": {
+        "type": "Double_sided"
+      },
+      "has_edge": false,
+      "affiliation_options": [
+        "Фасади",
+        "Корпуса"
+      ],
+      "object_name": "Матеріал 3"
+    },
+    "4": {
+      "id": "4",
+      "name": "LMDF",
+      "display_name": "Ламінований MDF",
+      "object_names": [
+        "Фасад ламінований",
+        "Панель"
+      ],
+      "object_z": 19,
+      "layer_name": "| LMDF",
+      "gaps": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "material_type": "texture",
+      "texture_paths": {
+        "main": "_LMDF.jpg",
+        "edge": "LMDF.jpg"
+      },
+      "color_properties": {
+        "main": {
+          "color": [
+            255,
+            255,
+            255
+          ],
+          "alpha": 1
+        },
+        "edge": {
+          "color": [
+            255,
+            255,
+            255
+          ],
+          "alpha": 1
+        }
+      },
+      "sidedness": {
+        "type": "Double_sided"
+      },
+      "has_edge": false,
+      "affiliation_options": [
+        "Фасади",
+        "Закладні"
+      ],
+      "object_name": "Матеріал 4"
+    },
+    "5": {
+      "id": "5",
+      "name": "Glass",
+      "display_name": "Скло",
+      "object_names": [
+        "Скляна полиця",
+        "Скло"
+      ],
+      "object_z": 5,
+      "layer_name": "| Glass",
+      "gaps": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "material_type": "color",
+      "texture_paths": {
+        "main": "",
+        "edge": ""
+      },
+      "color_properties": {
+        "main": {
+          "color": [
+            50,
+            140,
+            130
+          ],
+          "alpha": 0.2
+        },
+        "edge": {
+          "color": [
+            50,
+            130,
+            130
+          ],
+          "alpha": 0.6
+        }
+      },
+      "sidedness": {
+        "type": "Double_sided"
+      },
+      "has_edge": false,
+      "affiliation_options": [
+        "Скло",
+        "Декор"
+      ],
+      "object_name": "Матеріал 5"
+    },
+    "6": {
+      "id": "6",
+      "name": "Wood",
+      "display_name": "Шпон",
+      "object_names": [
+        "Шпонований фасад"
+      ],
+      "object_z": 19,
+      "layer_name": "| Wood",
+      "gaps": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "material_type": "texture",
+      "texture_paths": {
+        "main": "_Wood.jpg",
+        "edge": "Wood.jpg"
+      },
+      "color_properties": {
+        "main": {
+          "color": [
+            255,
+            255,
+            255
+          ],
+          "alpha": 1
+        },
+        "edge": {
+          "color": [
+            255,
+            255,
+            255
+          ],
+          "alpha": 1
+        }
+      },
+      "sidedness": {
+        "type": "Double_sided"
+      },
+      "has_edge": false,
+      "affiliation_options": [
+        "Фасади",
+        "Декор"
+      ],
+      "object_name": "Матеріал 6"
+    },
+    "7": {
+      "id": "7",
+      "name": "Stone",
+      "display_name": "Камінь",
+      "object_names": [
+        "Кам'яна стільниця",
+        "Підвіконня"
+      ],
+      "object_z": 22,
+      "layer_name": "| Stone",
+      "gaps": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "material_type": "texture",
+      "texture_paths": {
+        "main": "_Stone.jpg",
+        "edge": "Stone.jpg"
+      },
+      "color_properties": {
+        "main": {
+          "color": [
+            255,
+            255,
+            255
+          ],
+          "alpha": 1
+        },
+        "edge": {
+          "color": [
+            255,
+            255,
+            255
+          ],
+          "alpha": 1
+        }
+      },
+      "sidedness": {
+        "type": "Double_sided"
+      },
+      "has_edge": false,
+      "affiliation_options": [
+        "Стільниці",
+        "Корпуса"
+      ],
+      "object_name": "Матеріал 7"
+    },
+    "8": {
+      "id": "8",
+      "name": "No material",
+      "display_name": "Фарбований MDF",
+      "object_names": [
+        "Фарбований фасад"
+      ],
+      "object_z": 18,
+      "layer_name": "No material",
+      "gaps": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "material_type": "color",
+      "texture_paths": {
+        "main": "",
+        "edge": ""
+      },
+      "color_properties": {
+        "main": {
+          "color": [
+            255,
+            255,
+            255
+          ],
+          "alpha": 1
+        },
+        "edge": {
+          "color": [
+            255,
+            255,
+            255
+          ],
+          "alpha": 1
+        }
+      },
+      "sidedness": {
+        "type": "Double_sided"
+      },
+      "has_edge": false,
+      "affiliation_options": [
+        "Фасади",
+        "Корпуса"
+      ],
+      "object_name": "Матеріал 8"
+    }
+  },
+  "material_groups": {
+    "standard": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "special": [
+      "5",
+      "8"
+    ],
+    "decorative": [
+      "6",
+      "7"
+    ]
+  }
+}

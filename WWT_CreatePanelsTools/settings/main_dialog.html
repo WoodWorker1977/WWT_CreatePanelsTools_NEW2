@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <meta charset="UTF-8">
+   <title>Налаштування панелі</title>
+   <style>
+       body {
+           font-family: Arial, sans-serif;
+           padding: 12px;
+           background-color: #f0f0f0;
+           margin: 0;
+           font-size: 12px;
+           min-width: 250px;
+           min-height: 330px;
+       }
+
+       .form-group {
+           margin-bottom: 8px;
+           display: flex;
+           align-items: center;
+       }
+
+       label {
+           display: inline-block;
+           width: 120px;
+           margin-bottom: 2px;
+           flex-shrink: 0;
+       }
+
+       select,
+       input {
+           flex: 1;
+           min-width: 150px;
+           padding: 3px 5px;
+           border: 1px solid #ccc;
+           border-radius: 2px;
+           height: 24px;
+           box-sizing: border-box;
+       }
+
+       select option {
+           padding: 5px;
+           font-size: 12px;
+       }
+
+       .buttons {
+           margin-top: 12px;
+           text-align: left;
+           padding: 8px 0;
+           border-top: 1px solid #ddd;
+       }
+
+       button {
+           padding: 5px 12px;
+           margin-right: 8px;
+           border: none;
+           border-radius: 2px;
+           cursor: pointer;
+           font-size: 13px;
+       }
+
+       button.ok {
+           background-color: #4CAF50;
+           color: white;
+       }
+
+       button.cancel {
+           background-color: #f44336;
+           color: white;
+       }
+
+       button.settings {
+           background-color: #2c4ed9;
+           color: white;
+       }
+
+       button:hover {
+           opacity: 0.9;
+       }
+
+       select:focus,
+       input:focus {
+           border-color: #2196F3;
+           outline: none;
+           box-shadow: 0 0 2px rgba(33, 150, 243, 0.3);
+       }
+
+       .checkbox-group {
+           position: absolute;
+           top: 300px;
+           left: 0px;
+           display: flex;
+           align-items: center;
+           margin-bottom: 5px;
+       }
+
+       input[type="checkbox"] {
+           margin-right: 2;
+           transform: scale(0.7);
+           cursor: pointer;
+       }
+
+       .hidden {
+           display: none;
+       }
+
+       input[readonly] {
+           background-color: #f0f0f0;
+           cursor: not-allowed;
+       }
+
+       .modal {
+    position: absolute; /* Змінено з fixed на absolute */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Центрує модалку */
+    background: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: none;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Центрує модалку в межах батьківського контейнера */
+    background: white;
+    width: 200px; /* Можна змінити ширину за потреби */
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+       .edit-button {
+           padding: 3px 8px;
+           height: 24px;
+           min-width: auto;
+           flex: 0 0 auto;
+       }
+
+       #affiliationsList {
+           margin: 10px 0;
+           max-height: 300px;
+           overflow-y: auto;
+       }
+
+       .affiliation-item {
+           display: flex;
+           gap: 10px;
+           margin-bottom: 5px;
+           align-items: center;
+       }
+
+       .affiliation-item input {
+           flex: 1;
+       }
+
+       .flex-container {
+           display: flex;
+           gap: 5px;
+           flex: 1;
+       }
+
+            .info-block {
+            color: #666;
+            font-size: 12px;
+            padding: 5px 0;
+            margin: 10px 0;
+            text-align: left;
+            font-style: italic;
+        }
+
+        .form-group select:disabled,
+        .form-group button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+   </style>
+</head>
+
+<body>
+    <div class="form-group">
+        <label for="materials">Матеріал:</label>
+        <select id="materials"></select>
+    </div>
+    <div class="form-group">
+        <label for="thickness">Товщина (мм):</label>
+        <input type="number" id="thickness" min="0" step="0.1">
+    </div>
+    <div class="form-group">
+        <label for="name">Назва:</label>
+        <select id="name"></select>
+    </div>
+    <div class="form-group">
+        <label for="affiliation">Приналежність:</label>
+        <div class="flex-container">
+            <select id="affiliation" disabled></select>
+            <button class="edit-button" onclick="showAffiliationDialog()" disabled>...</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="layer">Шар:</label>
+        <input type="text" id="layer" readonly>
+    </div>
+    <div class="form-group">
+        <label for="object_type">Тип об'єкта:</label>
+        <select id="object_type">
+            <option value="0">Група</option>
+            <option value="1">Компонент</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="left_gap">Зазор зліва (мм):</label>
+        <input type="number" id="left_gap" min="0" step="0.1">
+    </div>
+    <div class="form-group">
+        <label for="right_gap">Зазор справа (мм):</label>
+        <input type="number" id="right_gap" min="0" step="0.1">
+    </div>
+    <div class="form-group">
+        <label for="top_gap">Зазор зверху (мм):</label>
+        <input type="number" id="top_gap" min="0" step="0.1">
+    </div>
+    <div class="form-group">
+        <label for="bottom_gap">Зазор знизу (мм):</label>
+        <input type="number" id="bottom_gap" min="0" step="0.1">
+    </div>
+    
+    <div class="form-group hidden">
+        <label for="has_edge">Має кромку:</label>
+        <input type="checkbox" id="has_edge">
+    </div>
+    
+    <div class="info-block">
+        * Функціонал "Приналежність" в розробці
+    </div>
+    
+    <div class="buttons">
+        <button class="ok" onclick="acceptDialog()">OK</button>
+        <button class="cancel" onclick="cancelDialog()">Скасувати</button>
+        <button class="settings" onclick="openSettings()">Налаштування</button>
+    </div>
+
+   <script>
+       let materialsSettings = {};
+       let currentSettings = {};
+       let currentAffiliations = [];
+
+       function initializeDialog(data) {
+           try {
+               console.log('Received data:', data);
+               materialsSettings = data.materials || {};
+               
+               const currentMaterial = data.current_material || Object.keys(materialsSettings)[0];
+               const lastUsedSettings = data.last_used_settings || {};
+               
+               currentSettings = Object.keys(lastUsedSettings).length > 0 
+                   ? lastUsedSettings 
+                   : {
+                       panel_material_type: currentMaterial,
+                       ...(materialsSettings[currentMaterial] || {})
+                   };
+
+               populateMaterialSelect();
+               populateLayerSelect(data.layers || []);
+               
+               const selectedMaterial = currentSettings.panel_material_type;
+               const materialData = materialsSettings[selectedMaterial] || {};
+               populateObjectNames(materialData.object_names || ['Панель']);
+               populateAffiliationSelect(materialData.affiliation_options || []);
+               
+               updateFormValues(currentSettings);
+               setupEventListeners();
+           } catch (error) {
+               console.error("Помилка ініціалізації діалогу:", error);
+               alert("Сталася помилка під час завантаження налаштувань.");
+           }
+       }
+
+       function populateAffiliationSelect(affiliations) {
+    const select = document.getElementById('affiliation');
+    select.innerHTML = '';
+    affiliations.forEach(aff => {
+        const option = document.createElement('option');
+        option.value = aff;
+        option.textContent = aff;
+        select.appendChild(option);
+    });
+
+    // Вибір першого значення, якщо список не порожній
+    if (affiliations.length > 0) {
+        select.value = affiliations[0];
+    }
+}
+
+       function showAffiliationDialog() {
+           const dialog = document.getElementById('affiliationEditDialog');
+           const list = document.getElementById('affiliationsList');
+           list.innerHTML = '';
+           
+           const materialId = document.getElementById('materials').value;
+           currentAffiliations = [...(materialsSettings[materialId].affiliation_options || [])];
+           
+           currentAffiliations.forEach((aff, index) => {
+               list.appendChild(createAffiliationItem(aff, index));
+           });
+           
+           dialog.style.display = 'block';
+       }
+
+       function createAffiliationItem(value, index) {
+           const div = document.createElement('div');
+           div.className = 'affiliation-item';
+           
+           const input = document.createElement('input');
+           input.value = value;
+           input.onchange = (e) => currentAffiliations[index] = e.target.value;
+           
+           const deleteBtn = document.createElement('button');
+           deleteBtn.textContent = 'X';
+           deleteBtn.className = 'cancel';
+           deleteBtn.onclick = () => {
+               currentAffiliations.splice(index, 1);
+               div.remove();
+           };
+           
+           div.appendChild(input);
+           div.appendChild(deleteBtn);
+           return div;
+       }
+
+       function addNewAffiliation() {
+           const list = document.getElementById('affiliationsList');
+           currentAffiliations.push(`Тест_${currentAffiliations.length + 1}`);
+           list.appendChild(createAffiliationItem(
+               currentAffiliations[currentAffiliations.length - 1],
+               currentAffiliations.length - 1
+           ));
+       }
+
+       function saveAffiliations() {
+           const materialId = document.getElementById('materials').value;
+           materialsSettings[materialId].affiliation_options = [...currentAffiliations];
+           
+           populateAffiliationSelect(currentAffiliations);
+           
+           if (window.sketchup) {
+               sketchup.update_affiliations(JSON.stringify({
+                   material_id: materialId,
+                   affiliations: currentAffiliations
+               }));
+           }
+           
+           closeAffiliationDialog();
+       }
+
+       function closeAffiliationDialog() {
+           document.getElementById('affiliationEditDialog').style.display = 'none';
+       }
+
+       function updateDialogSettings(settings) {
+           if (settings.materials && settings.current_material) {
+               materialsSettings = settings.materials;
+               currentSettings = settings.last_used_settings || {};
+               
+               populateMaterialSelect();
+               updateFormValues(currentSettings);
+           }
+       }
+
+       function populateMaterialSelect() {
+           const materialSelect = document.getElementById('materials');
+           materialSelect.innerHTML = '';
+           
+           Object.keys(materialsSettings).forEach(material => {
+               if (material !== 'default') {
+                   const option = document.createElement('option');
+                   option.value = material;
+                   option.textContent = materialsSettings[material].name;
+                   option.selected = (material === currentSettings.panel_material_type);
+                   materialSelect.appendChild(option);
+               }
+           });
+       }
+
+       function populateLayerSelect(layers) {
+           const layerInput = document.getElementById('layer');
+           layerInput.value = currentSettings.layer_name || '';
+       }
+
+       function populateObjectNames(names) {
+           const nameSelect = document.getElementById('name');
+           nameSelect.innerHTML = '';
+           
+           names.forEach((name, index) => {
+               const option = document.createElement('option');
+               option.value = name;
+               option.textContent = name;
+               option.selected = index === 0;
+               nameSelect.appendChild(option);
+           });
+       }
+
+       function updateFormValues(settings) {
+    const elements = {
+        materials: settings.panel_material_type,
+        thickness: settings.object_z || 18,
+        name: settings.object_name || 'Панель',
+        layer: settings.layer_name || '',
+        affiliation: settings.affiliation || '',
+        object_type: settings.state_object || 0,
+        left_gap: settings.left_gap || 0,
+        right_gap: settings.right_gap || 0,
+        top_gap: settings.top_gap || 0,
+        bottom_gap: settings.bottom_gap || 0,
+        has_edge: settings.has_edge !== undefined ? settings.has_edge : true
+    };
+
+    Object.entries(elements).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element.type === 'checkbox') {
+            element.checked = value;
+        } else {
+            element.value = value;
+        }
+    });
+}
+
+       function handleMaterialChange(event) {
+    const selectedMaterial = event.target.value;
+    const materialData = materialsSettings[selectedMaterial] || {};
+
+    populateObjectNames(materialData.object_names || ['Панель']);
+    populateAffiliationSelect(materialData.affiliation_options || []);
+
+    document.getElementById('layer').value = materialData.layer_name || '';
+
+    currentSettings = {
+        panel_material_type: selectedMaterial,
+        object_z: materialData.object_z || 18,
+        object_name: materialData.object_names ? materialData.object_names[0] : 'Панель',
+        layer_name: materialData.layer_name || '',
+        affiliation: materialData.affiliation_options ? materialData.affiliation_options[0] : '',
+        state_object: currentSettings.state_object || 0,
+        left_gap: materialData.gaps ? materialData.gaps[0] : 0,
+        right_gap: materialData.gaps ? materialData.gaps[1] : 0,
+        top_gap: materialData.gaps ? materialData.gaps[2] : 0,
+        bottom_gap: materialData.gaps ? materialData.gaps[3] : 0,
+        has_edge: materialData.has_edge !== undefined ? materialData.has_edge : true
+    };
+
+    updateFormValues(currentSettings);
+    updateSketchupSettings();
+}
+
+       function handleFormChange() {
+           updateSketchupSettings();
+       }
+
+       function getFormValues() {
+           return {
+               panel_material_type: document.getElementById('materials').value,
+               object_z: parseFloat(document.getElementById('thickness').value),
+               object_name: document.getElementById('name').value,
+               layer_name: document.getElementById('layer').value,
+               affiliation: document.getElementById('affiliation').value,
+               state_object: parseInt(document.getElementById('object_type').value),
+               left_gap: parseFloat(document.getElementById('left_gap').value) || 0,
+               right_gap: parseFloat(document.getElementById('right_gap').value) || 0,
+               top_gap: parseFloat(document.getElementById('top_gap').value) || 0,
+               bottom_gap: parseFloat(document.getElementById('bottom_gap').value) || 0,
+               has_edge: document.getElementById('has_edge').checked
+           };
+       }
+
+       function updateSketchupSettings() {
+           if (window.sketchup) {
+               const result = getFormValues();
+               sketchup.update_settings(JSON.stringify(result));
+           }
+       }
+
+       document.getElementById('has_edge').addEventListener('change', function(event) {
+           const currentSettings = getFormValues();
+           
+           if (window.sketchup) {
+               sketchup.update_has_edge(JSON.stringify({
+                   panel_material_type: currentSettings.panel_material_type,
+                   has_edge: event.target.checked
+               }));
+           }
+           
+           updateSketchupSettings();
+       });
+
+       function acceptDialog() {
+           const result = getFormValues();
+
+           if (result.object_z <= 0) {
+               alert('Розмір панелі повинен бути більше 0.');
+               return;
+           }
+
+           if (window.sketchup) {
+               sketchup.accept(JSON.stringify(result));
+           }
+       }
+
+       function cancelDialog() {
+           if (window.sketchup) {
+               sketchup.cancel();
+           }
+       }
+       
+       function openSettings() {
+           if (window.sketchup) {
+               sketchup.open_settings();
+           }
+       }
+
+       function setupEventListeners() {
+           document.getElementById('materials').addEventListener('change', handleMaterialChange);
+           
+           ['thickness', 'name', 'affiliation', 'object_type', 'left_gap', 'right_gap', 'top_gap', 'bottom_gap', 'has_edge']
+               .forEach(id => {
+                   const element = document.getElementById(id);
+                   const eventType = element.type === 'checkbox' ? 'change' : 'input';
+                   element.addEventListener(eventType, handleFormChange);
+               });
+       }
+
+       document.addEventListener('DOMContentLoaded', () => {
+           if (window.sketchup) {
+               sketchup.ready();
+           }
+       });
+   </script>
+</body>
+</html>
